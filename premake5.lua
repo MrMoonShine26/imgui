@@ -30,6 +30,10 @@ project "ImGui"
 		systemversion "latest"
 		cppdialect "C++20"
 
+	filter "system:macosx"
+		cppdialect "c++20"
+		staticruntime "On"
+
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"

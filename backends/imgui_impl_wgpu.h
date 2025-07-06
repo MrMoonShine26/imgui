@@ -10,11 +10,12 @@
 //#define IMGUI_IMPL_WEBGPU_BACKEND_WGPU
 
 // Implemented features:
-//  [X] Renderer: User texture binding. Use 'WGPUTextureView' as ImTextureID. Read the FAQ about ImTextureID!
-//  [X] Renderer: Large meshes support (64k+ vertices) with 16-bit indices.
-//  [X] Renderer: Expose selected render state for draw callbacks to use. Access in '(ImGui_ImplXXXX_RenderState*)platform_io.BackendRendererRenderState'.
-// Missing features:
-//  [ ] Renderer: Multi-viewport support (multiple windows). Not meaningful on the web.
+//  [X] Renderer: User texture binding. Use 'WGPUTextureView' as ImTextureID. Read the FAQ about ImTextureID/ImTextureRef!
+//  [X] Renderer: Large meshes support (64k+ vertices) even with 16-bit indices (ImGuiBackendFlags_RendererHasVtxOffset).
+//  [X] Renderer: Expose selected render state for draw callbacks to use. Access in '(ImGui_ImplXXXX_RenderState*)GetPlatformIO().Renderer_RenderState'.
+//  [X] Renderer: Texture updates support for dynamic font system (ImGuiBackendFlags_RendererHasTextures).
+// Missing features or Issues:
+//  [ ] Renderer: Multi-viewport support (multiple windows), useful for desktop.
 
 // You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
 // Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
@@ -54,11 +55,14 @@ IMGUI_IMPL_API void ImGui_ImplWGPU_NewFrame();
 IMGUI_IMPL_API void ImGui_ImplWGPU_RenderDrawData(ImDrawData* draw_data, WGPURenderPassEncoder pass_encoder);
 
 // Use if you want to reset your rendering device without losing Dear ImGui state.
-IMGUI_IMPL_API void ImGui_ImplWGPU_InvalidateDeviceObjects();
 IMGUI_IMPL_API bool ImGui_ImplWGPU_CreateDeviceObjects();
+IMGUI_IMPL_API void ImGui_ImplWGPU_InvalidateDeviceObjects();
+
+// (Advanced) Use e.g. if you need to precisely control the timing of texture updates (e.g. for staged rendering), by setting ImDrawData::Textures = NULL to handle this manually.
+IMGUI_IMPL_API void ImGui_ImplWGPU_UpdateTexture(ImTextureData* tex);
 
 // [BETA] Selected render state data shared with callbacks.
-// This is temporarily stored in io.BackendRendererRenderState during the ImGui_ImplWGPU_RenderDrawData() call.
+// This is temporarily stored in GetPlatformIO().Renderer_RenderState during the ImGui_ImplWGPU_RenderDrawData() call.
 // (Please open an issue if you feel you need access to more data)
 struct ImGui_ImplWGPU_RenderState
 {
